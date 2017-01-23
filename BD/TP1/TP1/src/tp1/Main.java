@@ -22,13 +22,22 @@ public class Main {
     public static TreeMap<String, Integer> treilli = new TreeMap<String, Integer>();
     public final static int min = 2; // 2 occurences est le min
     public static ArrayList<ArrayList<Apriori>> donneesTp;
+    public static TreeMap<String, Integer> maximauxFrequents = new TreeMap<String, Integer>();
+
     /*METHODES*/
     /*Convertit un treilli au format string en un arrayList*/
-
-    public void afficherTreeMap() {
+    public static void afficherTreeMap() {
         for (String mapKey : treilli.keySet()) {
-            System.out.println("ITEM : " + mapKey + " -- OCCURENRENCES " + treilli.get(mapKey));
+            System.out.println("ITEM : " + mapKey + " -- OCCURENCES " + treilli.get(mapKey));
         }
+    }
+
+    public static void afficherMaxFrequent() {
+        System.out.println("      MAX FREQUENTS : ");
+        for (String mapKey : maximauxFrequents.keySet()) {
+            System.out.println("        ITEM : " + mapKey + " -- OCCURENCES " + maximauxFrequents.get(mapKey));
+        }
+        System.out.println("");
     }
 
     public ArrayList<ArrayList<Apriori>> stringToCorrectStructure(String modele) {
@@ -40,7 +49,9 @@ public class Main {
         int nbrsLigne = lignes.length;
 
         for (int i = 2; i < nbrsLigne; i++) {
-            String[] vals = lignes[i].split(" ");
+            // un charac de non mot
+            String[] vals = lignes[i].split("[^\\w]");
+
             // on supprime les TIDS : i commence à 1
             int taille = vals.length;
             ArrayList<Apriori> collections = new ArrayList<Apriori>();
@@ -56,14 +67,15 @@ public class Main {
     }
 
     /*Compte le nombre d'item dans un treilli*/
-    public void compterItems(ArrayList<Apriori> liste) {
+    public static void compterItems(ArrayList<Apriori> liste) {
+
         treilli.clear();
+        /*On génére le nouveau treilli*/
         int taille = liste.size();
         int tailleCollection = donneesTp.size();
         int count = 0;
         for (int i = 0; i < taille; i++) {
             String mot = liste.get(i).getItem();
-            System.out.println("mot " + mot);
             char lettres[] = mot.toCharArray();
             int cmpt = 0;
             int tailleMot = lettres.length;
@@ -84,14 +96,12 @@ public class Main {
                     }
                 }
                 cmpt = 0;
-                //System.out.println("de");
             }
-
         }
     }
 
     /*afficher arrayList*/
-    public void afficherListe(ArrayList<Apriori> liste) {
+    public static void afficherListe(ArrayList<Apriori> liste) {
         int tailleListe = liste.size();
         for (int i = 0; i < tailleListe; i++) {
             System.out.print("ITEM : " + liste.get(i).getItem() + "\n");
@@ -146,7 +156,6 @@ public class Main {
     /*Combinaison de taille N différent de 1*/
     private static ArrayList<Apriori> combinaisonTailleN(TreeMap<String, Integer> donnees) {
         ArrayList<Apriori> donneesLn = new ArrayList<Apriori>();
-
         /*On change le format*/
         ArrayList<Apriori> newDonnees = new ArrayList<Apriori>();
 
@@ -155,12 +164,12 @@ public class Main {
         }
 
         boolean find = false;
-        // Si les données sont de taille "1"
+
         for (int i = 0; i < newDonnees.size() - 1; i++) {
             String firstItem = newDonnees.get(i).getItem();
-            /*Récupérer la deniere lettre*/
-            char lastLetter = firstItem.toCharArray()[firstItem.length() - 1];
-
+            /*Récupérer la premiere lettre*/
+            char lastLetter = firstItem.toCharArray()[0];
+            // on regarde les itemsSet le succedant
             for (int j = i + 1; j < newDonnees.size(); j++) {
                 String nextItem = newDonnees.get(j).getItem();
                 /*On prend la premier lettre de la chaine*/
@@ -185,22 +194,22 @@ public class Main {
     }
 
     /*On vérifie si il y a des infréquents, retourne seulement les fréquents*/
-    public static void checkMins() {
-        ArrayList<String> delete = new ArrayList<String>();
-        for (String mapKey : treilli.keySet()) {
-            int nbs = treilli.get(mapKey); //on get le nombre d'occurences
-            if (nbs < min) {
-                //ArrayList<Apriori> ite = ensemble.get(i);
-                // ite.remove(j); // on supprime l'item
-                delete.add(mapKey);
+    public static void checkFrequents() {
+
+        /*On supprimer les infréquents*/
+        for (Iterator<Map.Entry<String, Integer>> it = treilli.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Integer> entry = it.next();
+            if (entry.getValue() < min) {
+                it.remove();
             }
         }
-        for (int i = 0; i < delete.size(); i++) {
-            treilli.remove(delete.get(i));
+        /*On génére les maximaux fréquents avec l'max et treillis en static*/
+        if (maximauxFrequents.size() > 1) {// si premier tour 
+            maxFrequents();
         }
     }
 
-    private void genererPremierTreilli() {
+    private static void genererPremierTreilli() {
         int taille = donneesTp.size();
         int tailleCollection = 0;
         int count = 0;
@@ -218,26 +227,62 @@ public class Main {
         }
     }
 
-    public void aprioriAlgo(String jeuDonnees) {
+    public static void aprioriAlgo(String jeuDonnees) {
         Main algo = new Main();
 
         donneesTp = algo.stringToCorrectStructure(jeuDonnees);
-        algo.genererPremierTreilli();
-        algo.checkMins();
-        algo.afficherTreeMap();
+
+        genererPremierTreilli();
+        checkFrequents();
+        afficherTreeMap();
         int i = 1;
-        while (treilli.size() !=0) {
+        maximauxFrequents.putAll(treilli);;
+        afficherMaxFrequent();
+
+        while (treilli.size() > 1) {
+
             System.out.println("NEXT");
             ArrayList<Apriori> liste = algo.combinaison(i);
-            algo.afficherListe(liste);
-            algo.compterItems(liste);
-            System.out.println("TREILLI");
-            algo.afficherTreeMap();
-            algo.checkMins();
-            System.out.println("ELAGAGE");
-            algo.afficherTreeMap();
+            afficherListe(liste);
+            compterItems(liste);
+            System.out.println("Treilli");
+
+            afficherTreeMap();
+            checkFrequents();
+            System.out.println("Les fréquents");
+            afficherTreeMap();
             i++;
+
+            /*On copie le treilli pour garder le treilli n-1 dans maximauxFrequents*/
+            maximauxFrequents.clear();
+            maximauxFrequents.putAll(treilli);;
         }
+    }
+    /*Retourne les maximaux frequents*/
+
+    public static void maxFrequents() {
+
+        boolean check = false;
+        for (Iterator<Map.Entry<String, Integer>> it = maximauxFrequents.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Integer> entry = it.next();
+            String item = entry.getKey();
+            for (Map.Entry<String, Integer> entryTreilli : treilli.entrySet()) {
+                String itemTreilli = entryTreilli.getKey();
+                char[] chars = itemTreilli.toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    int tailleTab = item.split("" + chars[i]).length;
+                    if (tailleTab == 1) {
+                        check = true;
+                        break;
+                    }
+                }
+            }
+            if (check == true) {
+                it.remove();
+                check = false;
+            }
+        }
+        afficherMaxFrequent();
     }
 
     public static void main(String[] args) {
@@ -256,7 +301,8 @@ public class Main {
          */
         Main algo = new Main();
         algo.aprioriAlgo(jeuDonnees);
-        
+
     }
 
 }
+
