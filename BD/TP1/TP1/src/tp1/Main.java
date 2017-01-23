@@ -34,10 +34,14 @@ public class Main {
 
     public static void afficherMaxFrequent() {
         System.out.println("      MAX FREQUENTS : ");
-        for (String mapKey : maximauxFrequents.keySet()) {
-            System.out.println("        ITEM : " + mapKey + " -- OCCURENCES " + maximauxFrequents.get(mapKey));
+        if (maximauxFrequents.size() > 0) {
+            for (String mapKey : maximauxFrequents.keySet()) {
+                System.out.println("        ITEM : " + mapKey + " -- OCCURENCES " + maximauxFrequents.get(mapKey));
+            }
+            System.out.println("");
+        } else {
+            System.out.println("        Pas de max");
         }
-        System.out.println("");
     }
 
     public ArrayList<ArrayList<Apriori>> stringToCorrectStructure(String modele) {
@@ -177,7 +181,7 @@ public class Main {
                 if (compare == lastLetter) {
                     find = true;
                     /*On récupére les lettres suivantes*/
-                    String lastLetters = nextItem.substring(1, nextItem.length());
+                    String lastLetters = nextItem.substring(nextItem.length() - 1, nextItem.length());
                     /*Génération de la nouvelle données*/
                     String result = firstItem.concat(lastLetters);
                     Apriori obj = new Apriori(result);
@@ -237,7 +241,6 @@ public class Main {
         afficherTreeMap();
         int i = 1;
         maximauxFrequents.putAll(treilli);;
-        afficherMaxFrequent();
 
         while (treilli.size() > 1) {
 
@@ -257,30 +260,43 @@ public class Main {
             maximauxFrequents.clear();
             maximauxFrequents.putAll(treilli);;
         }
+
+        // afficher dernier ensemble en temps que max fréquents
+        afficherMaxFrequent();
     }
     /*Retourne les maximaux frequents*/
 
     public static void maxFrequents() {
 
-        boolean check = false;
         for (Iterator<Map.Entry<String, Integer>> it = maximauxFrequents.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Integer> entry = it.next();
-            String item = entry.getKey();
+            char[] charsItem = entry.getKey().toCharArray();
+            int indice = 0;
+            int taillleCharsItem = charsItem.length;
+            boolean find = false;
             for (Map.Entry<String, Integer> entryTreilli : treilli.entrySet()) {
                 String itemTreilli = entryTreilli.getKey();
-                char[] chars = itemTreilli.toCharArray();
-                for (int i = 0; i < chars.length; i++) {
-                    int tailleTab = item.split("" + chars[i]).length;
-                    if (tailleTab == 1) {
-                        check = true;
-                        break;
+                char[] charsTreilli = itemTreilli.toCharArray();
+
+                for (int i = 0; i < charsTreilli.length; i++) {
+                    if (charsTreilli[i] == charsItem[indice]) {
+                        indice++;
+                        if (taillleCharsItem == indice) {
+                            find = true;
+                            break;
+                        }
                     }
                 }
+                indice = 0;
+                if (find == true) {
+                    break;
+                }
             }
-            if (check == true) {
+            if (find == true) {
                 it.remove();
-                check = false;
+                find = false;
             }
+
         }
         afficherMaxFrequent();
     }
@@ -305,4 +321,3 @@ public class Main {
     }
 
 }
-
