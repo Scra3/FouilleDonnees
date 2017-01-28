@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class Readfile {
 
     // Permet de lire un fichier de le sotcker dans un string
-    static String readFileQuick(String path, Charset encoding)throws IOException {
+    public static String readFileQuick(String path, Charset encoding)throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }

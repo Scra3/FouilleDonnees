@@ -62,8 +62,6 @@ public class Main {
             liste.add(collections);
             for (int j = 1; j < taille; j++) {
                 liste.get(i - 2).add(new Apriori(vals[j])); // chaque élément est un item, un item est un string
-                /*Affichage check*/
-                //System.out.println(liste.get(i-2).get(j-1).getItem());
             }
         }
 

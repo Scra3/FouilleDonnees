@@ -14,17 +14,14 @@ package tp1;
 public class Apriori {
 
     private String item;
-    private int occurence;
 
     /*Constructeur*/
     public Apriori(String item, int occurence) {
         this.item = item;
-        this.occurence = occurence;
     }
 
     public Apriori(String item) {
         this.item = item;
-        this.occurence = -1; // pas encore compté
     }
     /*GET AND SET*/
 
@@ -35,17 +32,5 @@ public class Apriori {
     public void setItem(String item) {
         this.item = item;
     }
-
-    public int getOccurence() {
-        return occurence;
-    }
-
-    public void setOccurence(int occurence) {
-        this.occurence = occurence;
-    }
-
-    /*Methodes*/
-    
-   
 
 }
