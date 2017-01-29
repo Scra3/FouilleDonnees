@@ -5,20 +5,24 @@
  */
 package tp1Bis;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author scra
  */
-public class Element implements Comparable<Element> {
+public class Element {
 
     private String item;
     private Integer occurence;
+    private ArrayList<String> chemin;
 
     public Element(String element, Integer occurence) {
         this.item = element;
         this.occurence = occurence;
+        this.chemin = new ArrayList<String>();
     }
-
+    
     public String getItem() {
         return item;
     }
@@ -35,8 +39,13 @@ public class Element implements Comparable<Element> {
         this.occurence = occurence;
     }
 
-    @Override
-    public int compareTo(Element o) {
-        return this.getOccurence().compareTo(o.getOccurence());
+    public ArrayList<String> getChemin() {
+        return chemin;
     }
+
+    public void setChemin(ArrayList<String> chemin) {
+        this.chemin = chemin;
+    }
+    
+
 }

@@ -11,24 +11,14 @@ import java.util.ArrayList;
  *
  * @author scra
  */
-public class Node {
+public class HeaderTable implements Comparable<HeaderTable> {
 
     private Element element;
-    private ArrayList<Node> successeurs;
     private Node link;
 
-    public Node(Element element) {
+    public HeaderTable(Element element) {
         this.element = element;
-        this.successeurs = new ArrayList<Node>();
         this.link = null;
-    }
-
-    public Node getLink() {
-        return link;
-    }
-
-    public void setLink(Node link) {
-        this.link = link;
     }
 
     public Element getElement() {
@@ -39,12 +29,17 @@ public class Node {
         this.element = element;
     }
 
-    public ArrayList<Node> getSuccesseurs() {
-        return successeurs;
+    public Node getLink() {
+        return link;
     }
 
-    public void setSuccesseurs(ArrayList<Node> successeurs) {
-        this.successeurs = successeurs;
+    public void setLink(Node link) {
+        this.link = link;
+    }
+
+    @Override
+    public int compareTo(HeaderTable o) {
+        return this.getElement().getOccurence().compareTo(o.getElement().getOccurence());
     }
 
 }
