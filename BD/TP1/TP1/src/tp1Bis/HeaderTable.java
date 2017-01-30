@@ -39,7 +39,11 @@ public class HeaderTable implements Comparable<HeaderTable> {
 
     @Override
     public int compareTo(HeaderTable o) {
-        return this.getElement().getOccurence().compareTo(o.getElement().getOccurence());
+        if (0 == this.getElement().getOccurence().compareTo(o.getElement().getOccurence())) {
+            return -1;
+        } else {
+            return this.getElement().getOccurence().compareTo(o.getElement().getOccurence());
+        }
     }
 
 }

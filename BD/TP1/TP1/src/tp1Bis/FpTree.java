@@ -14,31 +14,31 @@ import java.util.TreeMap;
  *
  */
 public class FpTree extends Readfile {
-    
+
     private static TreeMap<String, Integer> L;
     private static ArrayList<HeaderTable> orderL;
     private static Node racine;
     private static int support;
-    
+
     public FpTree() {
         this.L = new TreeMap<String, Integer>();
         this.orderL = new ArrayList<HeaderTable>();
         this.racine = new Node(null);
         this.support = 2;
     }
-    
+
     protected static ArrayList<String[]> split(String donnees) {
         String[] donneesLignes = donnees.split("\n");
-        
+
         ArrayList<String[]> lignes = new ArrayList<String[]>();
-        
+
         for (int i = 2; i < donneesLignes.length; i++) {
             String[] table = donneesLignes[i].split(" ");
             lignes.add(Arrays.copyOfRange(table, 1, table.length));
         }
         return lignes;
     }
-    
+
     protected static void countElements(ArrayList<String[]> elements) {
         for (int i = 0; i < elements.size(); i++) {
             for (int j = 0; j < elements.get(i).length; j++) {
@@ -50,7 +50,7 @@ public class FpTree extends Readfile {
             }
         }
     }
-    
+
     public static void treeMapToArrayList() {
         // Afficher le contenu du MAP
         Set listKeys = L.keySet();  // Obtenir la liste des clés
@@ -61,7 +61,7 @@ public class FpTree extends Readfile {
             orderL.add(new HeaderTable(new Element(key, L.get(key))));
         }
     }
-    
+
     public static void displayTreeMap(TreeMap<String, Integer> elements) {
         // Afficher le contenu du MAP
         Set listKeys = elements.keySet();  // Obtenir la liste des clés
@@ -72,7 +72,7 @@ public class FpTree extends Readfile {
             System.out.println(key + "=>" + elements.get(key));
         }
     }
-    
+
     public static void displayArrayList(ArrayList<HeaderTable> array) {
         for (int i = 0; i < array.size(); i++) {
             System.out.println(array.get(i).getElement().getItem() + " => " + array.get(i).getElement().getOccurence());
@@ -81,35 +81,32 @@ public class FpTree extends Readfile {
             }
         }
     }
-    
-    public static void displayArrayListElement(ArrayList<Element> array) {
+
+    public static void displayArrayListNode(ArrayList<Node> array) {
         for (int i = 0; i < array.size(); i++) {
-            System.out.println(array.get(i).getItem() + " => " + array.get(i).getOccurence());
-            for (int j = 0; j < array.get(i).getChemin().size(); j++) {
-                System.out.println(" chemin => " + array.get(i).getChemin().get(j));
-            }
+            System.out.println(array.get(i).getElement().getChemin() + " : " + array.get(i).getElement().getOccurence());
         }
     }
-    
+
     public static void displayTable(String[] table) {
         for (int i = 0; i < table.length; i++) {
             System.out.println("Value " + table[i]);
         }
     }
-    
+
     public static void getOrderList(ArrayList<HeaderTable> orderL) {
         treeMapToArrayList();
         Collections.sort(orderL);
         Collections.reverse(orderL);
     }
-    
+
     public static ArrayList<String> sortNode(String[] elements) {
         ArrayList<String> order = new ArrayList<String>();
-        
+
         for (int i = 0; i < elements.length; i++) {
             order.add(elements[i]);
         }
-        
+
         Collections.sort(order, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -120,7 +117,7 @@ public class FpTree extends Readfile {
         });
         return order;
     }
-    
+
     public static void addNode(String[] elements) {
         ArrayList<String> order = sortNode(elements);
 
@@ -129,7 +126,7 @@ public class FpTree extends Readfile {
         boolean find = false;
         for (int i = 0; i < order.size(); i++) {
             ArrayList<String> chemin = new ArrayList<String>();
-            
+
             if (successeurs.size() != 0) {
                 for (int j = 0; j < successeurs.size(); j++) {
                     Node noeud = successeurs.get(j);
@@ -148,7 +145,7 @@ public class FpTree extends Readfile {
                 for (int j = 0; j < i; j++) {
                     chemin.add(order.get(j));
                 }
-                
+
                 noeud.getElement().setChemin(chemin);
                 successeurs = noeud.getSuccesseurs();
             } else {
@@ -156,18 +153,18 @@ public class FpTree extends Readfile {
             }
         }
     }
-    
+
     protected static void addLink(Node noeud, String nom) {
         HeaderTable ligne = null;
         Node nextNode = null;
-        
+
         for (int i = 0; i < orderL.size(); i++) {
             if (orderL.get(i).getElement().getItem().equals(nom)) {
                 ligne = orderL.get(i);
                 break;
             }
         }
-        
+
         if (ligne.getLink() != null) {
             nextNode = ligne.getLink();
 
@@ -175,43 +172,42 @@ public class FpTree extends Readfile {
                 nextNode = nextNode.getLink();
             }
             nextNode.setLink(noeud);
-            
+
         } else {
             ligne.setLink(noeud);
         }
-        
+
     }
-    
+
     protected static void buildTree(ArrayList<String[]> donnees) {
         for (int i = 0; i < donnees.size(); i++) {
             addNode(donnees.get(i));
         }
     }
-    
-    protected static ArrayList<Element> findItem(ArrayList<HeaderTable> list,String itemElement) {
-        E
+
+    protected static ArrayList<BaseConditionnelle> findItems(ArrayList<HeaderTable> list) {
         //Base conditionnel
-        for (int j = 0; j < list.size(); j++) {
-            if (list.get(j).getElement().getItem().equals(itemElement)) {
-                elements.add(successeurs.get(j).getElement());
-            } else {
-                if (successeurs.get(j).getSuccesseurs().size() > 0) {
-                    elements = findItem(successeurs.get(j).getSuccesseurs(), element, elements);
+        list.remove(0);
+        ArrayList<BaseConditionnelle> noeuds = new ArrayList<BaseConditionnelle>();
+        for (HeaderTable ligne : list) {
+            ArrayList<Node> noeud = new ArrayList<Node>();
+            Node nextNode = ligne.getLink();
+            System.out.println("Item : " + ligne.getElement().getItem());
+            while (nextNode != null) {
+                // n'est pas à la racine
+                if (nextNode.getElement().getChemin().size() > 0) {
+                    noeud.add(nextNode);
+                    System.out.print("Chemin : " + nextNode.getElement().getChemin());
+                    System.out.println(" : Occurences => " + nextNode.getElement().getOccurence());
                 }
+                nextNode = nextNode.getLink();
             }
+
+            noeuds.add(new BaseConditionnelle(ligne.getElement().getItem(), noeud));
         }
-        return elements;
+        return noeuds;
     }
-        
-    protected static ArrayList<ArrayList<Element>> findItems(ArrayList<HeaderTable> list) {
-        ArrayList<ArrayList<Element>> baseConditionnelle = new ArrayList<ArrayList<Element>>();
-        for (HeaderTable e : list) {
-            ArrayList<Element> el = findItem(racine.getSuccesseurs(), e.getElement(), new ArrayList<Element>());
-            baseConditionnelle.add(el);
-        }
-        return baseConditionnelle;
-    }
-    
+
     public static void removeBySupport(ArrayList<HeaderTable> orderL) {
         for (int i = orderL.size() - 1; i > 0; i--) {
             if (orderL.get(i).getElement().getOccurence() < support) {
@@ -221,7 +217,27 @@ public class FpTree extends Readfile {
             }
         }
     }
-    
+
+    public static ArrayList<Element> frequentsMax(Node noeud, ArrayList<Element> frequents) {
+
+        for (Node e : noeud.getSuccesseurs()) {
+
+            //Au dessus du support ? 
+            if (e.getElement().getOccurence() >= support) {
+                // Feuille ? 
+                if (e.getSuccesseurs().size() == 0) {
+                    frequents.add(e.getElement());
+                } else {
+                    if (e.getElement().getChemin().size() > 0) {
+                        frequents.add(e.getElement());
+                    }
+                    frequents = frequentsMax(e, frequents);
+                }
+            }
+        }
+        return frequents;
+    }
+
     public static void main(String[] args) {
         FpTree tree = new FpTree();
         //Emplacement fichier
@@ -233,20 +249,18 @@ public class FpTree extends Readfile {
         displayTreeMap(L);
         getOrderList(orderL);
         removeBySupport(orderL);
-        
+
         System.out.println("HEADER TABLE");
         displayArrayList(orderL);
         System.out.println("");
-        
         buildTree(donnees);
-        //System.out.println(racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getElement().getOccurence());
-        ArrayList<ArrayList<Element>> base = findItems(orderL);
+        ArrayList<BaseConditionnelle> base = findItems(orderL);
+        ArrayList<Element> els = frequentsMax(racine, new ArrayList<Element>());
         System.out.println("");
-        for (int i = base.size() - 1; i > 0; i--) {
-            displayArrayListElement(base.get(i));
+        for (Element el : els) {
+            System.out.println(el.getItem() + " => " + el.getChemin());
         }
-
-       // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
-        System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
+        // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
+        //System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
     }
 }
