@@ -139,31 +139,34 @@ public class FpTree extends Readfile {
                 }
             }
             if (find == false) {
-                successeurs.add(new Node(new Element(order.get(i), 1)));
-                Node noeud = successeurs.get(successeurs.size() - 1);
-                addLink(noeud, order.get(i));
-                for (int j = 0; j < i; j++) {
-                    chemin.add(order.get(j));
+                HeaderTable ligne = null;
+                for (int k = 0; k < orderL.size(); k++) {
+                    if (orderL.get(k).getElement().getItem().equals(order.get(i))) {
+                        ligne = orderL.get(k);
+                        break;
+                    }
                 }
+                if (ligne != null) {
+                    successeurs.add(new Node(new Element(order.get(i), 1)));
 
-                noeud.getElement().setChemin(chemin);
-                successeurs = noeud.getSuccesseurs();
+                    Node noeud = successeurs.get(successeurs.size() - 1);
+                    addLink(noeud, order.get(i), ligne);
+
+                    for (int j = 0; j < i; j++) {
+                        chemin.add(order.get(j));
+                    }
+
+                    noeud.getElement().setChemin(chemin);
+                    successeurs = noeud.getSuccesseurs();
+                }
             } else {
                 find = false;
             }
         }
     }
 
-    protected static void addLink(Node noeud, String nom) {
-        HeaderTable ligne = null;
+    protected static void addLink(Node noeud, String nom, HeaderTable ligne) {
         Node nextNode = null;
-
-        for (int i = 0; i < orderL.size(); i++) {
-            if (orderL.get(i).getElement().getItem().equals(nom)) {
-                ligne = orderL.get(i);
-                break;
-            }
-        }
 
         if (ligne.getLink() != null) {
             nextNode = ligne.getLink();
@@ -219,22 +222,23 @@ public class FpTree extends Readfile {
     }
 
     public static ArrayList<Element> frequentsMax(Node noeud, ArrayList<Element> frequents) {
-
-        for (Node e : noeud.getSuccesseurs()) {
-
-            //Au dessus du support ? 
-            if (e.getElement().getOccurence() >= support) {
-                // Feuille ? 
-                if (e.getSuccesseurs().size() == 0) {
-                    frequents.add(e.getElement());
+        boolean nodeMax = true;
+        //Pour tous les succeceurs 
+        for (Node succeceurs : noeud.getSuccesseurs()) {
+            //on check le supp
+            if (support <= succeceurs.getElement().getOccurence()) {
+                if (succeceurs.getSuccesseurs().size() == 0) {
+                    frequents.add(succeceurs.getElement());
                 } else {
-                    if (e.getElement().getChemin().size() > 0) {
-                        frequents.add(e.getElement());
-                    }
-                    frequents = frequentsMax(e, frequents);
+                    frequents = frequentsMax(succeceurs, frequents);
                 }
+                nodeMax = false;
             }
         }
+        if (nodeMax == true) {
+            frequents.add(noeud.getElement());
+        }
+
         return frequents;
     }
 
@@ -257,6 +261,7 @@ public class FpTree extends Readfile {
 
         ArrayList<BaseConditionnelle> base = findItems(orderL);
         ArrayList<Element> els = frequentsMax(racine, new ArrayList<Element>());
+
         System.out.println("");
         for (Element el : els) {
             System.out.println(el.getItem() + " => " + el.getChemin());
