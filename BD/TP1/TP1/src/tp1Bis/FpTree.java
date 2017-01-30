@@ -188,10 +188,11 @@ public class FpTree extends Readfile {
         }
     }
     
-    protected static ArrayList<Element> findItem(ArrayList<Node> successeurs, Element element, ArrayList<Element> elements) {
+    protected static ArrayList<Element> findItem(ArrayList<HeaderTable> list,String itemElement) {
+        E
         //Base conditionnel
-        for (int j = 0; j < successeurs.size(); j++) {
-            if (successeurs.get(j).getElement().getItem().equals(element.getItem())) {
+        for (int j = 0; j < list.size(); j++) {
+            if (list.get(j).getElement().getItem().equals(itemElement)) {
                 elements.add(successeurs.get(j).getElement());
             } else {
                 if (successeurs.get(j).getSuccesseurs().size() > 0) {
@@ -201,7 +202,7 @@ public class FpTree extends Readfile {
         }
         return elements;
     }
-    
+        
     protected static ArrayList<ArrayList<Element>> findItems(ArrayList<HeaderTable> list) {
         ArrayList<ArrayList<Element>> baseConditionnelle = new ArrayList<ArrayList<Element>>();
         for (HeaderTable e : list) {
