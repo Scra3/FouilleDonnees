@@ -254,19 +254,7 @@ public class FpTree extends Readfile {
         displayArrayList(orderL);
         System.out.println("");
         buildTree(donnees);
-<<<<<<< HEAD
-        //System.out.println(racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getElement().getOccurence());
-        /*ArrayList<ArrayList<Element>> base = findItems(orderL);
-        System.out.println("");
-        
-        for (int i = base.size() - 1; i > 0; i--) {
-            displayArrayListElement(base.get(i));
-        }*/
 
-       // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
-      // int r = orderL.get(1).getLink().getLink().getElement().getOccurence() + orderL.get(1).getLink().getLink().getLink().getElement().getOccurence()+orderL.get(1).getLink().getLink().getElement().getOccurence();
-       // System.out.println(" ok => " + r);
-=======
         ArrayList<BaseConditionnelle> base = findItems(orderL);
         ArrayList<Element> els = frequentsMax(racine, new ArrayList<Element>());
         System.out.println("");
@@ -275,6 +263,5 @@ public class FpTree extends Readfile {
         }
         // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
         //System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
->>>>>>> 28be9b14ac8b3fe65b1b41b56c8e1aaccb5a1a05
     }
 }
