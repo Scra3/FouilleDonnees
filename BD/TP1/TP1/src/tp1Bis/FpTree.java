@@ -239,13 +239,15 @@ public class FpTree extends Readfile {
         
         buildTree(donnees);
         //System.out.println(racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getElement().getOccurence());
-        ArrayList<ArrayList<Element>> base = findItems(orderL);
+        /*ArrayList<ArrayList<Element>> base = findItems(orderL);
         System.out.println("");
+        
         for (int i = base.size() - 1; i > 0; i--) {
             displayArrayListElement(base.get(i));
-        }
+        }*/
 
        // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
-        System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
+      // int r = orderL.get(1).getLink().getLink().getElement().getOccurence() + orderL.get(1).getLink().getLink().getLink().getElement().getOccurence()+orderL.get(1).getLink().getLink().getElement().getOccurence();
+       // System.out.println(" ok => " + r);
     }
 }
