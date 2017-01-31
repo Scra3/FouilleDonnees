@@ -15,16 +15,22 @@ import java.util.TreeMap;
  */
 public class FpTree extends Readfile {
 
-    private static TreeMap<String, Integer> L;
-    private static ArrayList<HeaderTable> orderL;
-    private static Node racine;
-    private static int support;
+    private static TreeMap<String, Integer> L = new TreeMap<String, Integer>();
+    private static ArrayList<HeaderTable> orderL = new ArrayList<HeaderTable>();
+
+    private Node racine;
+    private static int support = 2;
 
     public FpTree() {
-        this.L = new TreeMap<String, Integer>();
-        this.orderL = new ArrayList<HeaderTable>();
         this.racine = new Node(null);
-        this.support = 2;
+    }
+
+    public Node getRacine() {
+        return racine;
+    }
+
+    public void setRacine(Node racine) {
+        this.racine = racine;
     }
 
     protected static ArrayList<String[]> split(String donnees) {
@@ -118,11 +124,11 @@ public class FpTree extends Readfile {
         return order;
     }
 
-    public static void addNode(String[] elements) {
+    public static void addNode(String[] elements, FpTree fp, boolean link) {
         ArrayList<String> order = sortNode(elements);
 
         // addNode
-        ArrayList<Node> successeurs = racine.getSuccesseurs();
+        ArrayList<Node> successeurs = fp.getRacine().getSuccesseurs();
         boolean find = false;
         for (int i = 0; i < order.size(); i++) {
             ArrayList<String> chemin = new ArrayList<String>();
@@ -150,8 +156,9 @@ public class FpTree extends Readfile {
                     successeurs.add(new Node(new Element(order.get(i), 1)));
 
                     Node noeud = successeurs.get(successeurs.size() - 1);
-                    addLink(noeud, order.get(i), ligne);
-
+                    if (link == true) {
+                        addLink(noeud, order.get(i), ligne);
+                    }
                     for (int j = 0; j < i; j++) {
                         chemin.add(order.get(j));
                     }
@@ -182,31 +189,34 @@ public class FpTree extends Readfile {
 
     }
 
-    protected static void buildTree(ArrayList<String[]> donnees) {
+    protected static void buildTree(ArrayList<String[]> donnees, FpTree fp, boolean link) {
         for (int i = 0; i < donnees.size(); i++) {
-            addNode(donnees.get(i));
+            addNode(donnees.get(i), fp, link);
         }
     }
 
-    protected static ArrayList<BaseConditionnelle> findItems(ArrayList<HeaderTable> list) {
+    protected static ArrayList<String[]> getBaseConditionnelle(HeaderTable ligne) {
         //Base conditionnel
-        list.remove(0);
-        ArrayList<BaseConditionnelle> noeuds = new ArrayList<BaseConditionnelle>();
-        for (HeaderTable ligne : list) {
-            ArrayList<Node> noeud = new ArrayList<Node>();
-            Node nextNode = ligne.getLink();
-            System.out.println("Item : " + ligne.getElement().getItem());
-            while (nextNode != null) {
-                // n'est pas à la racine
-                if (nextNode.getElement().getChemin().size() > 0) {
-                    noeud.add(nextNode);
-                    System.out.print("Chemin : " + nextNode.getElement().getChemin());
-                    System.out.println(" : Occurences => " + nextNode.getElement().getOccurence());
+        ArrayList<String[]> noeuds = new ArrayList<String[]>();
+        Node nextNode = ligne.getLink();
+        System.out.println("Item : " + ligne.getElement().getItem());
+        while (nextNode != null) {
+            // n'est pas à la racine
+            if (nextNode.getElement().getChemin().size() > 0) {
+                System.out.print("Chemin : " + nextNode.getElement().getChemin());
+                System.out.println(" : Occurences => " + nextNode.getElement().getOccurence());
+
+                ArrayList<String> chemin = nextNode.getElement().getChemin();
+                String[] cheminTable = new String[chemin.size()];
+                cheminTable = chemin.toArray(cheminTable);
+
+                //Le nombre d'occurence du chemin
+                for (int i = 0; i < nextNode.getElement().getOccurence(); i++) {
+                    noeuds.add(cheminTable);
                 }
-                nextNode = nextNode.getLink();
             }
 
-            noeuds.add(new BaseConditionnelle(ligne.getElement().getItem(), noeud));
+            nextNode = nextNode.getLink();
         }
         return noeuds;
     }
@@ -242,6 +252,57 @@ public class FpTree extends Readfile {
         return frequents;
     }
 
+    private static ArrayList<ItemSets> generationItemsets(Node node, String item, ArrayList<ItemSets> items) {
+        // a chaque noeud
+        for (Node nextNode : node.getSuccesseurs()) {
+            if (nextNode.getElement().getOccurence() >= support) {
+                //System.out.println("feezferfpirfreoggerojerfoezjfosakt re ha");
+                //On ajoute le noeud
+                ArrayList<String> chemin = new ArrayList<>();
+                chemin.add(nextNode.getElement().getItem());
+                chemin.add(item);
+                items.add(new ItemSets(nextNode.getElement().getOccurence(), chemin));
+
+                if (nextNode.getElement().getChemin().size() > 0) {
+                    ArrayList<String> way = nextNode.getElement().getChemin();
+                    way.add(nextNode.getElement().getItem());
+                    way.add(item);
+                    items.add(new ItemSets(nextNode.getElement().getOccurence(), way));
+                }
+                if (nextNode.getSuccesseurs().size() > 0) {
+                    items = generationItemsets(nextNode, item, items);
+                }
+            }
+        }
+
+        return items;
+    }
+
+    private static void phaseExploration() {
+        for (int i = orderL.size() - 1; i >= 1; i--) {
+            System.out.println("Base conditionnellle : ");
+            ArrayList<String[]> baseCond = getBaseConditionnelle(orderL.get(i));
+            //On construir l'arbre conditionnelle
+            if (baseCond.size() > 0) {
+                System.out.println("Construction du fpTree conditionnelle");
+
+                FpTree treeCond = new FpTree();
+                buildTree(baseCond, treeCond, false);
+                //System.out.println("Chemin " + treeCond.getRacine().getSuccesseurs().get(0).getElement().getOccurence());
+
+                System.out.println("Génération Itemsets");
+
+                ArrayList<ItemSets> items = generationItemsets(treeCond.getRacine(), orderL.get(i).getElement().getItem(), new ArrayList<ItemSets>());
+
+                for (ItemSets item : items) {
+                    System.out.println("Items : " + item.getNoeuds());
+                    System.out.println("Occurence : " + item.getOccurence());
+
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         FpTree tree = new FpTree();
         //Emplacement fichier
@@ -257,15 +318,15 @@ public class FpTree extends Readfile {
         System.out.println("HEADER TABLE");
         displayArrayList(orderL);
         System.out.println("");
-        buildTree(donnees);
+        buildTree(donnees, tree, true);
+        phaseExploration();
 
-        ArrayList<BaseConditionnelle> base = findItems(orderL);
-        ArrayList<Element> els = frequentsMax(racine, new ArrayList<Element>());
-
-        System.out.println("");
-        for (Element el : els) {
-            System.out.println(el.getItem() + " => " + el.getChemin());
-        }
+        //ArrayList<Element> els = frequentsMax(tree.getRacine(), new ArrayList<Element>());
+        //System.out.println("Chemin " + treeConditionnelle.getRacine().getSuccesseurs().get(0).getElement().getItem());
+        //System.out.println("");
+        /*for (Element el : els) {
+         System.out.println(el.getItem() + " => " + el.getChemin());
+         }*/
         // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
         //System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
     }
