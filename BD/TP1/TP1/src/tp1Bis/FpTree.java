@@ -279,6 +279,8 @@ public class FpTree extends Readfile {
     }
 
     private static void phaseExploration() {
+        ArrayList<ItemSets> frequentMax = new ArrayList<>();
+        int plsLongChemin = 0;
         for (int i = orderL.size() - 1; i >= 1; i--) {
             System.out.println("Base conditionnellle : ");
             ArrayList<String[]> baseCond = getBaseConditionnelle(orderL.get(i));
@@ -287,20 +289,49 @@ public class FpTree extends Readfile {
                 System.out.println("Construction du fpTree conditionnelle");
 
                 FpTree treeCond = new FpTree();
+                //On construit le fpTree conditionnelle
                 buildTree(baseCond, treeCond, false);
-                //System.out.println("Chemin " + treeCond.getRacine().getSuccesseurs().get(0).getElement().getOccurence());
 
                 System.out.println("Génération Itemsets");
-
+                // On génère les itemssets
                 ArrayList<ItemSets> items = generationItemsets(treeCond.getRacine(), orderL.get(i).getElement().getItem(), new ArrayList<ItemSets>());
 
+                int maxTailleItems = 0;
+                ArrayList<ItemSets> itemsMax = new ArrayList<>();
+                //On cherche la taille du plus longs chemin
                 for (ItemSets item : items) {
                     System.out.println("Items : " + item.getNoeuds());
                     System.out.println("Occurence : " + item.getOccurence());
-
+                    if (maxTailleItems <= item.getNoeuds().size()) {
+                        maxTailleItems = item.getNoeuds().size();
+                    }
+                }
+                //On chercher les chemins de longueurs "plus long chemin" => maxTailleItems
+                for (ItemSets item : items) {
+                    if (maxTailleItems <= item.getNoeuds().size()) {
+                        itemsMax.add(item);
+                    }
+                }
+                if (maxTailleItems > plsLongChemin) {
+                    plsLongChemin = maxTailleItems;
+                }
+                //On vérifie si il est un sous ensemble d'un fréquent, si oui alors on ne l'ajoute pas car il n'est pas fréquent max
+                for (ItemSets itMax : itemsMax) {
+                    frequentMax.add(itMax);
                 }
             }
         }
+        System.out.println("Fréquent Maximum");
+        for (ItemSets fMax : frequentMax) {
+            if (fMax.getNoeuds().size() == plsLongChemin) {
+                System.out.println("FrequentMax : " + fMax.getNoeuds());
+                System.out.println("Occurence : " + fMax.getOccurence());
+            } else {
+                System.out.println("FrequentMax : " + fMax.getNoeuds());
+                System.out.println("Occurence : " + fMax.getOccurence());
+            }
+        }
+
     }
 
     public static void main(String[] args) {
