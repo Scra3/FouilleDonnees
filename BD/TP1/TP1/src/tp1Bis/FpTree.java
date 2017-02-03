@@ -279,8 +279,8 @@ public class FpTree extends Readfile {
     }
 
     private static void phaseExploration() {
-        ArrayList<ItemSets> frequentMax = new ArrayList<>();
-        int plsLongChemin = 0;
+        ArrayList<String[]> frequentMax = new ArrayList<String[]>();
+
         for (int i = orderL.size() - 1; i >= 1; i--) {
             System.out.println("Base conditionnellle : ");
             ArrayList<String[]> baseCond = getBaseConditionnelle(orderL.get(i));
@@ -312,26 +312,35 @@ public class FpTree extends Readfile {
                         itemsMax.add(item);
                     }
                 }
-                if (maxTailleItems > plsLongChemin) {
-                    plsLongChemin = maxTailleItems;
-                }
+
                 //On vérifie si il est un sous ensemble d'un fréquent, si oui alors on ne l'ajoute pas car il n'est pas fréquent max
                 for (ItemSets itMax : itemsMax) {
-                    frequentMax.add(itMax);
+                    String[] s = new String[itemsMax.size()];
+                    frequentMax.add(itMax.getNoeuds().toArray(s));
                 }
             }
         }
+        //On construit l'arbre et on prend seulement les feuilles.
+        FpTree treeFeuille = new FpTree();
+        buildTree(frequentMax, treeFeuille, false);
         System.out.println("Fréquent Maximum");
-        for (ItemSets fMax : frequentMax) {
-            if (fMax.getNoeuds().size() == plsLongChemin) {
-                System.out.println("FrequentMax : " + fMax.getNoeuds());
-                System.out.println("Occurence : " + fMax.getOccurence());
+        ArrayList<Node> feuilles = new ArrayList<Node>();
+        feuilles = getFeuilles(treeFeuille.getRacine(), feuilles);
+        for (Node feuille : feuilles) {
+            System.out.println(" FREQUENT " + feuille.getElement().getChemin());
+        }
+    }
+
+    public static ArrayList<Node> getFeuilles(Node noeu, ArrayList<Node> feuilles) {
+        for (Node nextNode : noeu.getSuccesseurs()) {
+            if (nextNode.getSuccesseurs().size() == 0) {
+                nextNode.getElement().getChemin().add(nextNode.getElement().getItem());
+                feuilles.add(nextNode);
             } else {
-                System.out.println("FrequentMax : " + fMax.getNoeuds());
-                System.out.println("Occurence : " + fMax.getOccurence());
+                feuilles = getFeuilles(nextNode, feuilles);
             }
         }
-
+        return feuilles;
     }
 
     public static void main(String[] args) {
@@ -351,14 +360,5 @@ public class FpTree extends Readfile {
         System.out.println("");
         buildTree(donnees, tree, true);
         phaseExploration();
-
-        //ArrayList<Element> els = frequentsMax(tree.getRacine(), new ArrayList<Element>());
-        //System.out.println("Chemin " + treeConditionnelle.getRacine().getSuccesseurs().get(0).getElement().getItem());
-        //System.out.println("");
-        /*for (Element el : els) {
-         System.out.println(el.getItem() + " => " + el.getChemin());
-         }*/
-        // System.out.println("ok => " + racine.getSuccesseurs().get(0).getSuccesseurs().get(0).getSuccesseurs().get(1).getLink().getElement().getItem());
-        //System.out.println(" ok => " + orderL.get(1).getLink().getLink().getLink().getElement().getItem());
     }
 }
