@@ -9,33 +9,32 @@ import java.util.ArrayList;
 
 /**
  *
- * @author b16007026
+ * @author scra
  */
 public class BaseConditionnelle {
 
-    private String nomItem;
-    private ArrayList<Node> noeuds;
+    private ArrayList<String[]> baseCond;
+    private String item;
 
-    public BaseConditionnelle(String nomItem, ArrayList<Node> noeuds) {
-        this.nomItem = nomItem;
-        this.noeuds = noeuds;
+    public BaseConditionnelle(ArrayList<String[]> baseCond, String item) {
+        this.baseCond = baseCond;
+        this.item = item;
     }
 
-
-    public String getNomItem() {
-        return nomItem;
+    public ArrayList<String[]> getBaseCond() {
+        return baseCond;
     }
 
-    public void setNomItem(String nomItem) {
-        this.nomItem = nomItem;
+    public void setBaseCond(ArrayList<String[]> baseCond) {
+        this.baseCond = baseCond;
     }
 
-    public ArrayList<Node> getNoeuds() {
-        return noeuds;
+    public String getItem() {
+        return item;
     }
 
-    public void setNoeuds(ArrayList<Node> noeuds) {
-        this.noeuds = noeuds;
+    public void setItem(String item) {
+        this.item = item;
     }
 
 }
