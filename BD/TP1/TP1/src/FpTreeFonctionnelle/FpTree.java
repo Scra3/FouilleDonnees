@@ -1,4 +1,4 @@
-package tp1Bis;
+package FpTreeFonctionnelle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,10 +45,15 @@ public class FpTree extends Readfile {
         String[] donneesLignes = donnees.split("\n");
 
         ArrayList<String[]> lignes = new ArrayList<String[]>();
-
-        for (int i = 2; i < donneesLignes.length; i++) {
+        int[] ordre = {3, 0, 2, 1, 4};
+        for (int i = 1; i < donneesLignes.length; i++) {
             String[] table = donneesLignes[i].split(" ");
-            lignes.add(Arrays.copyOfRange(table, 1, table.length));
+            String[] tableOrdre = new String[table.length];
+            //Trier
+            for (int j = 0; j < ordre.length; j++) {
+                tableOrdre[j] = table[ordre[j]];
+            }
+            lignes.add(tableOrdre);
         }
         return lignes;
     }
@@ -338,35 +343,11 @@ public class FpTree extends Readfile {
     public static void main(String[] args) {
         FpTree tree = new FpTree();
         //Emplacement fichier
-        final String chemin = "src/tp1Bis/donnees";
+        final String chemin = "src/FpTreeFonctionnelle/donneesFonctionnelles";
         // On recupere le contenu du fichier
         String jeuDonnees = getFile(chemin);
         // On le split au format voulu
         ArrayList<String[]> donnees = split(jeuDonnees);
-        // On compte les items
-        countElements(donnees);
-        displayTreeMap(L);
-        //On ordonne la liste des items
-        getOrderList(tree.getOrderL());
-        //On supprime les items qui ne respecte pas le support
-        removeBySupport(tree.getOrderL());
-        System.out.println("HEADER TABLE");
-        displayArrayList(tree.getOrderL());
-        //On save l'orderL sans les links
-        System.out.println("");
-        //On construit le FPTREE avec les liens(TRUE)
-        buildTree(donnees, tree, true);
-        //On explore l'abre pour trouver les fréquent MAX
-        ArrayList<String[]> frequentMax = phaseExploration(tree);
-        //On détermine les fréquent max
-        tree.setRacine(new Node(null));
-        buildTree(frequentMax, tree, true);
-        ArrayList<Node> feuilles = getFeuilles(tree.getRacine(), new ArrayList<Node>());
-        
-        //Affichage des fréquents Max
-        System.out.println("Fréquents max :");
-        for (Node feuille : feuilles) {
-            System.out.println("FrequentMax " + feuille.getElement().getChemin());
-        }
+
     }
 }

@@ -3,27 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tp1;
+package FpTree;
 
-
+import java.util.ArrayList;
 
 /**
  *
  * @author scra
  */
-public class Apriori {
+public class BaseConditionnelle {
 
+    private ArrayList<String[]> baseCond;
     private String item;
 
-    /*Constructeur*/
-    public Apriori(String item, int occurence) {
+    public BaseConditionnelle(ArrayList<String[]> baseCond, String item) {
+        this.baseCond = baseCond;
         this.item = item;
     }
 
-    public Apriori(String item) {
-        this.item = item;
+    public ArrayList<String[]> getBaseCond() {
+        return baseCond;
     }
-    /*GET AND SET*/
+
+    public void setBaseCond(ArrayList<String[]> baseCond) {
+        this.baseCond = baseCond;
+    }
 
     public String getItem() {
         return item;

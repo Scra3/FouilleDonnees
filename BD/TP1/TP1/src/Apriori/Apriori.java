@@ -3,31 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tp1Bis;
+package Apriori;
 
-import java.util.ArrayList;
+
 
 /**
  *
  * @author scra
  */
-public class BaseConditionnelle {
+public class Apriori {
 
-    private ArrayList<String[]> baseCond;
     private String item;
 
-    public BaseConditionnelle(ArrayList<String[]> baseCond, String item) {
-        this.baseCond = baseCond;
+    /*Constructeur*/
+    public Apriori(String item, int occurence) {
         this.item = item;
     }
 
-    public ArrayList<String[]> getBaseCond() {
-        return baseCond;
+    public Apriori(String item) {
+        this.item = item;
     }
-
-    public void setBaseCond(ArrayList<String[]> baseCond) {
-        this.baseCond = baseCond;
-    }
+    /*GET AND SET*/
 
     public String getItem() {
         return item;

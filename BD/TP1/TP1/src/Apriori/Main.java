@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tp1;
+package Apriori;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -301,7 +301,7 @@ public class Main {
 
     public static void main(String[] args) {
         //Emplacement fichier
-        final String donnees = "src/tp1/donnees";
+        final String donnees = "src/Apriori/donnees";
         //Lecture du fichier
         String jeuDonnees = null;
         try {
